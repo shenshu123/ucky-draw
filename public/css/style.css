@@ -104,8 +104,8 @@ body {
 
 .wheel-container {
   position: relative;
-  width: 340px;
-  height: 340px;
+  width: 380px;
+  height: 380px;
   margin: 0 auto;
 }
 
@@ -154,76 +154,66 @@ body {
   position: relative;
 }
 
-.wheel-inner-border::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 32%;
-  height: 32%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.95);
-  z-index: 1;
-  pointer-events: none;
-}
-
 .wheel {
   width: 100%;
   height: 100%;
   border-radius: 50%;
   position: relative;
   transform: rotate(0deg);
-  z-index: 2;
 }
 
 .wheel-label {
   position: absolute;
-  width: 100px;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-origin: center center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.wheel-label-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 64px;
+  margin-left: -32px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  font-size: 12px;
-  color: #8b2252;
-  font-weight: 600;
-  line-height: 1.3;
-  pointer-events: none;
-  gap: 3px;
-  z-index: 3;
+  gap: 4px;
+  transform-origin: center center;
 }
 
 .prize-icon {
-  font-size: 34px;
+  font-size: 28px;
   line-height: 1;
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.18));
-}
-
-.wheel-label em {
-  font-style: normal;
-  font-size: 14px;
-  color: #6b1040;
-  font-weight: 800;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12));
 }
 
 .prize-label {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   line-height: 1.2;
+  color: #6b1040;
+  max-width: 64px;
+  white-space: nowrap;
 }
 
 .wheel-pointer {
   position: absolute;
-  top: calc(50% - 76px);
   left: 50%;
-  transform: translateX(-50%);
-  width: 28px;
-  height: 30px;
-  background: #e74c3c;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  top: calc(50% - 44px);
+  transform: translate(-50%, -100%);
   z-index: 12;
+  line-height: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.wheel-pointer svg {
+  display: block;
 }
 
 .spin-btn {
@@ -231,8 +221,8 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 96px;
-  height: 96px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   border: 3px solid #fff;
   background: linear-gradient(145deg, #e84393, #c0392b);
@@ -398,11 +388,10 @@ body {
   .title { font-size: 40px; }
   .subtitle { font-size: 16px; }
   .subtitle span { font-size: 22px; }
-  .wheel-container { width: 300px; height: 300px; }
-  .wheel-label { width: 90px; font-size: 10px; }
-  .wheel-label em { font-size: 12px; }
-  .prize-label { font-size: 10px; }
-  .prize-icon { font-size: 28px; }
+  .wheel-container { width: 320px; height: 320px; }
+  .wheel-label-inner { width: 56px; margin-left: -28px; }
+  .prize-label { font-size: 11px; max-width: 56px; }
+  .prize-icon { font-size: 24px; }
   .tap-hand { font-size: 28px; margin-top: 28px; margin-left: 38px; }
   .spin-btn { width: 80px; height: 80px; font-size: 15px; }
   .cta-banner { font-size: 18px; }

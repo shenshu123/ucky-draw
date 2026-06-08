@@ -15,6 +15,7 @@ const closeModal = document.getElementById('closeModal');
 
 const SEGMENT_COLORS = ['#ffb3c6', '#ffd6e0', '#ffb3c6', '#ffd6e0', '#ffb3c6', '#ffd6e0'];
 const PRIZE_ICONS = ['🖥️', '💻', '📱', '📲', '⌚', '💵'];
+const PRIZE_SHORT = ['Desktop', 'Laptop', '17 Pro Max', '17 Pro', 'Watch', '$500'];
 
 const spinBtnText = spinBtn.querySelector('.spin-btn-text');
 const tapHand = document.getElementById('tapHand');
@@ -43,21 +44,26 @@ function buildWheel(prizeList) {
   wheelEl.querySelectorAll('.wheel-label').forEach((el) => el.remove());
 
   const segmentAngle = 360 / SEGMENT_COUNT;
+  const wheelSize = wheelEl.offsetWidth || 300;
+  const labelRadius = Math.round(wheelSize * 0.39);
+
   prizeList.forEach((prize, i) => {
-    const angle = i * segmentAngle + segmentAngle / 2 - 90;
-    const rad = (angle * Math.PI) / 180;
-    const radius = 40;
+    const segDeg = i * segmentAngle + segmentAngle / 2 - 90;
+    const shortName = PRIZE_SHORT[prize.id] || prize.label;
 
     const label = document.createElement('div');
     label.className = 'wheel-label';
-    label.style.left = `calc(50% + ${radius * Math.cos(rad)}%)`;
-    label.style.top = `calc(50% + ${radius * Math.sin(rad)}%)`;
-    label.style.transform = `translate(-50%, -50%) rotate(${angle + 90}deg)`;
-    label.innerHTML = `
+    label.style.transform = `rotate(${segDeg}deg)`;
+
+    const inner = document.createElement('div');
+    inner.className = 'wheel-label-inner';
+    inner.style.transform = `translateY(-${labelRadius}px) rotate(90deg)`;
+    inner.innerHTML = `
       <span class="prize-icon">${getPrizeIcon(prize.id)}</span>
-      <em>${prize.name}</em>
-      <span class="prize-label">${prize.label}</span>
+      <span class="prize-label">${shortName}</span>
     `;
+
+    label.appendChild(inner);
     wheelEl.appendChild(label);
   });
 }
@@ -68,7 +74,7 @@ function buildLights() {
   for (let i = 0; i < 24; i++) {
     const light = document.createElement('div');
     light.className = 'light' + (i % 2 === 0 ? ' light-on' : '');
-    light.style.transform = `rotate(${i * 15}deg) translateY(-158px)`;
+    light.style.transform = `rotate(${i * 15}deg) translateY(-176px)`;
     lightsEl.appendChild(light);
   }
 }
@@ -80,7 +86,7 @@ async function loadStatus() {
   prizes = data.prizes;
   remaining = data.remaining;
   remainingEl.textContent = remaining;
-  buildWheel(prizes);
+  requestAnimationFrame(() => buildWheel(prizes));
   spinBtn.disabled = remaining <= 0;
   setSpinLabel(remaining > 0 ? 'Spin' : 'No spins left');
   updateTapHand();
@@ -154,6 +160,14 @@ resultModal.addEventListener('click', (e) => {
 buildLights();
 loadStatus();
 updateTapHand();
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (prizes.length) buildWheel(prizes);
+  }, 150);
+});
 
 setInterval(() => {
   document.querySelectorAll('.light').forEach((el, i) => {

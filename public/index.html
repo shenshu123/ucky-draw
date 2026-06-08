@@ -31,7 +31,11 @@
             <div class="wheel" id="wheel"></div>
           </div>
         </div>
-        <div class="wheel-pointer"></div>
+        <div class="wheel-pointer" aria-hidden="true">
+          <svg width="30" height="32" viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 0L30 32H0L15 0Z" fill="#e74c3c"/>
+          </svg>
+        </div>
         <button type="button" class="spin-btn" id="spinBtn">
           <span class="spin-btn-text">Spin</span>
         </button>
