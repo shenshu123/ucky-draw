@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="admin-page">
+    <section id="loginSection" class="login-card">
+      <h1>🎛️ Admin Dashboard</h1>
+      <form id="loginForm">
+        <label>Admin Password</label>
+        <input type="password" id="password" placeholder="Enter password" required>
+        <button type="submit">Sign In</button>
+      </form>
+      <p class="hint">Default password: admin123</p>
+      <a href="/" class="back-link">← Back to Lucky Draw</a>
+    </section>
+
+    <section id="adminSection" style="display:none">
+      <header class="admin-header">
+        <h1>🎛️ Admin Dashboard</h1>
+        <div>
+          <a href="/" class="back-link">Back to Draw</a>
+          <button id="logoutBtn" class="btn-outline">Sign Out</button>
+        </div>
+      </header>
+
+      <div class="cards">
+        <div class="card">
+          <h2>Draw Settings</h2>
+          <form id="configForm">
+            <div class="field">
+              <label>Spins per user</label>
+              <input type="number" id="maxDraws" min="0" required>
+            </div>
+
+            <h3>Prize Probabilities</h3>
+            <div id="prizesContainer"></div>
+            <p class="prob-summary">Total weight: <span id="probTotal">0</span> (relative weights, does not need to equal 100)</p>
+
+            <button type="submit" class="btn-primary">Save Settings</button>
+            <span id="saveMsg" class="msg"></span>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Statistics</h2>
+          <div class="stats-summary">
+            <div class="stat-item">
+              <span class="stat-num" id="totalUsers">0</span>
+              <span class="stat-label">Participants</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-num" id="totalDraws">0</span>
+              <span class="stat-label">Total Spins</span>
+            </div>
+          </div>
+          <button id="refreshStats" class="btn-outline">Refresh</button>
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Spins</th>
+                <th>Last Prize</th>
+              </tr>
+            </thead>
+            <tbody id="statsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

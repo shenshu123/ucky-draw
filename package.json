@@ -1,0 +1,13 @@
+{
+  "name": "lucky-draw-wheel",
+  "version": "1.0.0",
+  "description": "Lucky Draw Wheel",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "dependencies": {
+    "@vercel/kv": "^3.0.0"
+  }
+}

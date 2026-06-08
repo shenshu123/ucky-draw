@@ -1,0 +1,30 @@
+{
+  "test-user-001": {
+    "drawCount": 1,
+    "history": [
+      {
+        "prizeId": 5,
+        "prizeName": "6th Prize",
+        "prizeLabel": "$500 USD",
+        "time": "2026-06-08T06:39:42.390Z"
+      }
+    ]
+  },
+  "b51516b2-40f3-4a34-bff7-4c828a597b02": {
+    "drawCount": 2,
+    "history": [
+      {
+        "prizeId": 5,
+        "prizeName": "6th Prize",
+        "prizeLabel": "$500 USD",
+        "time": "2026-06-08T06:48:32.203Z"
+      },
+      {
+        "prizeId": 5,
+        "prizeName": "6th Prize",
+        "prizeLabel": "$500 USD",
+        "time": "2026-06-08T06:50:30.369Z"
+      }
+    ]
+  }
+}
