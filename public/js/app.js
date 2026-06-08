@@ -46,12 +46,12 @@ function buildWheel(prizeList) {
   prizeList.forEach((prize, i) => {
     const angle = i * segmentAngle + segmentAngle / 2 - 90;
     const rad = (angle * Math.PI) / 180;
-    const radius = 70;
+    const radius = 40;
 
     const label = document.createElement('div');
     label.className = 'wheel-label';
-    label.style.left = `${50 + radius * Math.cos(rad)}%`;
-    label.style.top = `${50 + radius * Math.sin(rad)}%`;
+    label.style.left = `calc(50% + ${radius * Math.cos(rad)}%)`;
+    label.style.top = `calc(50% + ${radius * Math.sin(rad)}%)`;
     label.style.transform = `translate(-50%, -50%) rotate(${angle + 90}deg)`;
     label.innerHTML = `
       <span class="prize-icon">${getPrizeIcon(prize.id)}</span>

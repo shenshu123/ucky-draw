@@ -159,13 +159,13 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 34%;
-  height: 34%;
+  width: 32%;
+  height: 32%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, #fff 55%, rgba(255, 255, 255, 0.95) 100%);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9);
-  z-index: 2;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.95);
+  z-index: 1;
   pointer-events: none;
 }
 
@@ -175,11 +175,12 @@ body {
   border-radius: 50%;
   position: relative;
   transform: rotate(0deg);
+  z-index: 2;
 }
 
 .wheel-label {
   position: absolute;
-  width: 108px;
+  width: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -190,6 +191,7 @@ body {
   line-height: 1.3;
   pointer-events: none;
   gap: 3px;
+  z-index: 3;
 }
 
 .prize-icon {
@@ -213,14 +215,13 @@ body {
 
 .wheel-pointer {
   position: absolute;
-  top: calc(50% - 52px);
+  top: calc(50% - 76px);
   left: 50%;
-  margin-left: -14px;
-  width: 0;
-  height: 0;
-  border-left: 14px solid transparent;
-  border-right: 14px solid transparent;
-  border-top: 28px solid #e74c3c;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 30px;
+  background: #e74c3c;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
   z-index: 12;
 }
