@@ -14,6 +14,25 @@ const resultText = document.getElementById('resultText');
 const closeModal = document.getElementById('closeModal');
 
 const SEGMENT_COLORS = ['#ffb3c6', '#ffd6e0', '#ffb3c6', '#ffd6e0', '#ffb3c6', '#ffd6e0'];
+const PRIZE_ICONS = ['🖥️', '💻', '📱', '📲', '⌚', '💵'];
+
+const spinBtnText = spinBtn.querySelector('.spin-btn-text');
+const tapHand = document.getElementById('tapHand');
+
+function getPrizeIcon(id) {
+  return PRIZE_ICONS[id] || '🎁';
+}
+
+function setSpinLabel(text) {
+  if (spinBtnText) spinBtnText.textContent = text;
+  else spinBtn.textContent = text;
+}
+
+function updateTapHand() {
+  if (!tapHand) return;
+  const show = remaining > 0 && !isSpinning;
+  tapHand.classList.toggle('hidden', !show);
+}
 
 function buildWheel(prizeList) {
   const stops = SEGMENT_COLORS.map(
@@ -34,7 +53,11 @@ function buildWheel(prizeList) {
     label.style.left = `${50 + radius * Math.cos(rad)}%`;
     label.style.top = `${50 + radius * Math.sin(rad)}%`;
     label.style.transform = `translate(-50%, -50%) rotate(${angle + 90}deg)`;
-    label.innerHTML = `<em>${prize.name}</em><br>${prize.label}`;
+    label.innerHTML = `
+      <span class="prize-icon">${getPrizeIcon(prize.id)}</span>
+      <em>${prize.name}</em>
+      <span class="prize-label">${prize.label}</span>
+    `;
     wheelEl.appendChild(label);
   });
 }
@@ -59,7 +82,8 @@ async function loadStatus() {
   remainingEl.textContent = remaining;
   buildWheel(prizes);
   spinBtn.disabled = remaining <= 0;
-  spinBtn.textContent = remaining > 0 ? 'Spin' : 'No spins left';
+  setSpinLabel(remaining > 0 ? 'Spin' : 'No spins left');
+  updateTapHand();
 }
 
 function calcTargetRotation(prizeIndex) {
@@ -75,7 +99,8 @@ async function spin() {
 
   isSpinning = true;
   spinBtn.disabled = true;
-  spinBtn.textContent = 'Spinning...';
+  setSpinLabel('Spinning...');
+  updateTapHand();
 
   try {
     const userId = getUserId();
@@ -90,7 +115,8 @@ async function spin() {
       alert(data.error || 'Draw failed');
       isSpinning = false;
       spinBtn.disabled = remaining <= 0;
-      spinBtn.textContent = remaining > 0 ? 'Spin' : 'No spins left';
+      setSpinLabel(remaining > 0 ? 'Spin' : 'No spins left');
+      updateTapHand();
       return;
     }
 
@@ -102,17 +128,20 @@ async function spin() {
     setTimeout(() => {
       remaining = data.remaining;
       remainingEl.textContent = remaining;
-      resultText.innerHTML = `You won<br><strong>${data.prize.name}</strong><br>${data.prize.label}`;
+      const icon = getPrizeIcon(data.prizeIndex);
+      resultText.innerHTML = `You won<br><span class="result-prize-icon">${icon}</span><strong>${data.prize.name}</strong><br>${data.prize.label}`;
       resultModal.classList.add('show');
       isSpinning = false;
       spinBtn.disabled = remaining <= 0;
-      spinBtn.textContent = remaining > 0 ? 'Spin' : 'No spins left';
+      setSpinLabel(remaining > 0 ? 'Spin' : 'No spins left');
+      updateTapHand();
     }, SPIN_DURATION + 200);
   } catch {
     alert('Network error. Please try again.');
     isSpinning = false;
     spinBtn.disabled = false;
-    spinBtn.textContent = 'Spin';
+    setSpinLabel('Spin');
+    updateTapHand();
   }
 }
 
@@ -124,6 +153,7 @@ resultModal.addEventListener('click', (e) => {
 
 buildLights();
 loadStatus();
+updateTapHand();
 
 setInterval(() => {
   document.querySelectorAll('.light').forEach((el, i) => {
