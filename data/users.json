@@ -26,5 +26,27 @@
         "time": "2026-06-08T06:50:30.369Z"
       }
     ]
+  },
+  "test-local-001": {
+    "drawCount": 1,
+    "history": [
+      {
+        "prizeId": 5,
+        "prizeName": "6th Prize",
+        "prizeLabel": "$500 USD",
+        "time": "2026-06-08T08:19:22.148Z"
+      }
+    ]
+  },
+  "a430f7e5-e090-4aab-a75a-b2d7d3949d47": {
+    "drawCount": 1,
+    "history": [
+      {
+        "prizeId": 5,
+        "prizeName": "6th Prize",
+        "prizeLabel": "$500 USD",
+        "time": "2026-06-08T08:19:41.519Z"
+      }
+    ]
   }
 }

@@ -7,9 +7,22 @@ const {
 } = require('../lib/api');
 const { sendJson, readBody } = require('../lib/response');
 
+function parseRequest(req) {
+  const host = req.headers.host || 'localhost';
+  const url = new URL(req.url || '/', `http://${host}`);
+  const route = url.pathname.replace(/^\/api\/?/, '');
+  const query = { ...req.query };
+
+  url.searchParams.forEach((value, key) => {
+    if (key !== 'path' && key !== 'slug') query[key] = value;
+  });
+
+  return { route, query };
+}
+
 module.exports = async (req, res) => {
-  const segments = req.query.path || [];
-  const route = Array.isArray(segments) ? segments.join('/') : String(segments);
+  const { route, query } = parseRequest(req);
+  req.query = query;
   const method = (req.method || 'GET').toUpperCase();
 
   if (method === 'OPTIONS') {
@@ -29,7 +42,7 @@ module.exports = async (req, res) => {
     if (route === 'admin/config' && method === 'PUT') return handleAdminPutConfig(req, res);
     if (route === 'admin/stats' && method === 'GET') return handleAdminStats(req, res);
 
-    return sendJson(res, 405, { error: 'Method not allowed' });
+    return sendJson(res, 404, { error: 'Not found', route, method });
   } catch (err) {
     return sendJson(res, 500, { error: err.message || 'Server error' });
   }
