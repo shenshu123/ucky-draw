@@ -26,7 +26,7 @@ Local dev uses `data/config.json` and `data/users.json` for storage.
 
 ## Deploy to Vercel
 
-Vercel runs API routes as serverless functions. **File storage does not persist on Vercel**, so you need **Vercel KV** (Redis) for config and user data.
+Vercel runs API routes as serverless functions. **File storage does not persist on Vercel**, so you need **Upstash Redis** (from Vercel Marketplace) for config and user data.
 
 ### Step 1 — Push code to GitHub
 
@@ -47,12 +47,18 @@ git push -u origin main
 5. Root Directory: `.` (project root)
 6. Click **Deploy** (first deploy may fail until KV is connected — that's OK)
 
-### Step 3 — Create Vercel KV database
+### Step 3 — Add Upstash Redis (replaces old Vercel KV)
+
+Vercel no longer has a native "KV" option. Use **Upstash Redis** instead:
 
 1. Open your project on Vercel
-2. Go to **Storage** tab → **Create Database**
-3. Choose **KV** → create and **Connect to Project**
-4. Vercel will auto-inject `KV_REST_API_URL` and `KV_REST_API_TOKEN`
+2. Go to **Storage** tab
+3. Under **Marketplace Database Providers**, find **Upstash** → **Upstash for Redis**
+4. Click **Add** / **Create** → choose the free plan → **Create**
+5. Click **Connect Project** and select your `ucky-draw` project
+6. Vercel auto-injects `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`
+
+Alternative: [vercel.com/marketplace/upstash](https://vercel.com/marketplace/upstash) → Install → connect to project
 
 ### Step 4 — Set environment variables
 
@@ -62,7 +68,7 @@ In **Project → Settings → Environment Variables**, add:
 |----------|-------|-------|
 | `ADMIN_PASSWORD` | your secure password | Overrides default `admin123` |
 
-KV variables are added automatically when you connect the database.
+Redis env vars are added automatically when you connect Upstash to the project.
 
 ### Step 5 — Redeploy
 

@@ -8,6 +8,7 @@ const {
   handleAdminPutConfig,
   handleAdminStats,
 } = require('../lib/api');
+const { sendJson, readBody } = require('../lib/response');
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -21,21 +22,6 @@ const MIME = {
   '.jpg': 'image/jpeg',
   '.svg': 'image/svg+xml',
 };
-
-function readBody(req) {
-  return new Promise((resolve, reject) => {
-    let body = '';
-    req.on('data', (chunk) => (body += chunk));
-    req.on('end', () => {
-      try {
-        resolve(body ? JSON.parse(body) : {});
-      } catch {
-        reject(new Error('Invalid JSON'));
-      }
-    });
-    req.on('error', reject);
-  });
-}
 
 function toExpressLikeReq(req, url, body) {
   return {
@@ -53,8 +39,7 @@ function createResAdapter(rawRes) {
       return this;
     },
     json(data) {
-      rawRes.writeHead(this._status || 200, { 'Content-Type': 'application/json; charset=utf-8' });
-      rawRes.end(JSON.stringify(data));
+      sendJson(rawRes, this._status || 200, data);
     },
   };
 }
@@ -87,8 +72,10 @@ const server = http.createServer(async (req, res) => {
   const pathname = url.pathname;
 
   try {
-    const body = req.method === 'POST' || req.method === 'PUT' ? await readBody(req) : {};
-    const expressReq = toExpressLikeReq(req, url, body);
+    const expressReq = toExpressLikeReq(req, url, {});
+    if (req.method === 'POST' || req.method === 'PUT') {
+      expressReq.body = await readBody(req);
+    }
     const expressRes = createResAdapter(res);
 
     if (pathname === '/api/status') return handleStatus(expressReq, expressRes);
