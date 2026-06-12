@@ -10,9 +10,14 @@ const { sendJson, readBody } = require('../lib/response');
 function parseRequest(req) {
   const host = req.headers.host || 'localhost';
   const url = new URL(req.url || '/', `http://${host}`);
-  const route = url.pathname.replace(/^\/api\/?/, '');
-  const query = { ...req.query };
+  let route = url.pathname.replace(/^\/api\/?/, '');
 
+  if (!route || route === '/') {
+    const segments = req.query.path || req.query.slug || [];
+    route = Array.isArray(segments) ? segments.join('/') : String(segments || '');
+  }
+
+  const query = { ...req.query };
   url.searchParams.forEach((value, key) => {
     if (key !== 'path' && key !== 'slug') query[key] = value;
   });

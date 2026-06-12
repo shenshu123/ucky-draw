@@ -27,7 +27,8 @@ loginForm.addEventListener('submit', async (e) => {
   try {
     const res = await fetch('/api/admin/config', { headers: headers() });
     if (!res.ok) {
-      alert('Incorrect password');
+      const data = await res.json().catch(() => ({}));
+      alert(data.error || `Login failed (${res.status})`);
       return;
     }
     loginSection.style.display = 'none';
