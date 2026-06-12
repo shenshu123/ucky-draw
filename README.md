@@ -60,19 +60,11 @@ Vercel no longer has a native "KV" option. Use **Upstash Redis** instead:
 
 Alternative: [vercel.com/marketplace/upstash](https://vercel.com/marketplace/upstash) → Install → connect to project
 
-### Step 4 — Set environment variables
-
-In **Project → Settings → Environment Variables**, add:
-
-| Variable | Value | Notes |
-|----------|-------|-------|
-| `ADMIN_PASSWORD` | your secure password | Overrides default `admin123` |
-
-Redis env vars are added automatically when you connect Upstash to the project.
-
-### Step 5 — Redeploy
+### Step 4 — Redeploy
 
 **Deployments → ... → Redeploy** (or push a new commit).
+
+Admin password is fixed: `admin123`
 
 ### Step 6 — Verify
 
@@ -101,7 +93,7 @@ vercel.json      → routing config
 | `PUT /api/admin/config` | Update weights and spin limits |
 | `GET /api/admin/stats` | Participation statistics |
 
-Admin requests require header: `X-Admin-Password: <your password>`
+Admin requests require header: `X-Admin-Password: admin123`
 
 ## Probability
 
