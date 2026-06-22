@@ -6,6 +6,8 @@ const {
   handleSpin,
   handleRegister,
   handleLogin,
+  handleCouponDraw,
+  handleCouponRedeem,
   handleAdminGetConfig,
   handleAdminPutConfig,
   handleAdminStats,
@@ -81,6 +83,8 @@ const server = http.createServer(async (req, res) => {
     }
     const expressRes = createResAdapter(res);
 
+    if (pathname === '/api/coupon-draw' && req.method === 'POST') return handleCouponDraw(expressReq, expressRes);
+    if (pathname === '/api/coupon-redeem' && req.method === 'POST') return handleCouponRedeem(expressReq, expressRes);
     if (pathname === '/api/register' && req.method === 'POST') return handleRegister(expressReq, expressRes);
     if (pathname === '/api/login' && req.method === 'POST') return handleLogin(expressReq, expressRes);
     if (pathname === '/api/status') return handleStatus(expressReq, expressRes);

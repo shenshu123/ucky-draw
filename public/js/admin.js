@@ -119,6 +119,8 @@ async function loadStats() {
       (u) => `
     <tr data-user-id="${u.userId}">
       <td><strong>${u.username}</strong></td>
+      <td>${u.coupon ? u.coupon.label || u.coupon.name : '-'}</td>
+      <td>${u.couponRedeemed ? (u.redeemSpendAmount ? '€' + u.redeemSpendAmount + ' → ' + u.redeemSpinsGranted + ' spins' : 'Yes') : '-'}</td>
       <td>${u.maxDraws}</td>
       <td>${u.drawCount}</td>
       <td>${u.remaining}</td>

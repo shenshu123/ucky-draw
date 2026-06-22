@@ -128,6 +128,29 @@
         <div class="welfare-notice-icon">✅</div>
         <p>All welfare promotions offered by our company are <strong>genuine and valid</strong>. During the welfare event period, each lucky participant has <strong>one chance</strong> to claim a welfare coupon — <strong>one per person only</strong>.</p>
       </div>
+
+      <div class="coupon-actions" id="couponActions">
+        <div class="my-coupon-box" id="myCouponBox" style="display:none">
+          <span class="my-coupon-label">Your Coupon</span>
+          <span class="my-coupon-value" id="myCouponValue">-</span>
+        </div>
+
+        <button type="button" class="coupon-draw-btn" id="drawCouponBtn">🎟️ Draw Welfare Coupon</button>
+
+        <div class="redeem-box" id="redeemBox" style="display:none">
+          <p class="redeem-title">Redeem Coupon for Wheel Spins</p>
+          <select id="spendTier" class="redeem-select">
+            <option value="99">€99+ → 1 spin</option>
+            <option value="166">€166+ → 2 spins</option>
+            <option value="288">€288+ → 4 spins</option>
+            <option value="388">€388+ → 6 spins</option>
+            <option value="520">€520+ → 10 spins</option>
+          </select>
+          <button type="button" class="redeem-btn" id="redeemBtn">Redeem for Spins</button>
+        </div>
+
+        <p class="coupon-status" id="couponStatus"></p>
+      </div>
     </section>
 
     <section class="rules-card">
@@ -175,7 +198,7 @@
     </footer>
   </div>
 
-  <div class="modal show" id="authModal">
+  <div class="modal" id="authModal">
     <div class="modal-content auth-content">
       <h2 class="auth-title">Welcome</h2>
       <div class="auth-tabs">
@@ -192,8 +215,16 @@
         <input type="password" id="registerPassword" placeholder="Password (min 4 chars)" autocomplete="new-password" required>
         <button type="submit" class="modal-btn auth-submit">Create Account</button>
       </form>
-      <p class="auth-hint" id="authHint">New users start with 0 spins. Contact admin to get spins assigned.</p>
+      <p class="auth-hint" id="authHint">Sign in to draw coupons and spin the wheel.</p>
       <p class="auth-error" id="authError"></p>
+    </div>
+  </div>
+
+  <div class="modal" id="couponResultModal">
+    <div class="modal-content">
+      <div class="modal-icon">🎟️</div>
+      <p id="couponResultText"></p>
+      <button type="button" class="modal-btn" id="closeCouponModal">Got it!</button>
     </div>
   </div>
 

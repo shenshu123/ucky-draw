@@ -8,6 +8,11 @@ let isSpinning = false;
 let currentRotation = 0;
 let currentUserId = null;
 let currentUsername = '';
+let canDrawCoupon = true;
+let canRedeem = false;
+let userCoupon = null;
+let couponRedeemed = false;
+let pendingAction = null;
 
 const wheelEl = document.getElementById('wheel');
 const spinBtn = document.getElementById('spinBtn');
@@ -22,6 +27,16 @@ const usernameDisplay = document.getElementById('usernameDisplay');
 const logoutBtn = document.getElementById('logoutBtn');
 const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registerForm');
+const drawCouponBtn = document.getElementById('drawCouponBtn');
+const redeemBtn = document.getElementById('redeemBtn');
+const redeemBox = document.getElementById('redeemBox');
+const myCouponBox = document.getElementById('myCouponBox');
+const myCouponValue = document.getElementById('myCouponValue');
+const couponStatus = document.getElementById('couponStatus');
+const spendTier = document.getElementById('spendTier');
+const couponResultModal = document.getElementById('couponResultModal');
+const couponResultText = document.getElementById('couponResultText');
+const closeCouponModal = document.getElementById('closeCouponModal');
 
 const SEGMENT_COLORS = ['#ffb3c6', '#ffd6e0', '#ffb3c6', '#ffd6e0', '#ffb3c6', '#ffd6e0'];
 const PRIZE_ICONS = ['🖥️', '💻', '📱', '📲', '⌚', '💵'];
@@ -50,22 +65,60 @@ function clearUser() {
   currentUsername = '';
 }
 
-function showAuth() {
+function requireAuth(action) {
+  pendingAction = action;
   authModal.classList.add('show');
-  userBar.style.display = 'none';
-  spinBtn.disabled = true;
-  setSpinLabel('Sign in to spin');
-  updateTapHand();
+  showAuthError('');
 }
 
 function hideAuth() {
   authModal.classList.remove('show');
-  userBar.style.display = 'block';
-  usernameDisplay.textContent = currentUsername;
 }
 
 function showAuthError(msg) {
   authError.textContent = msg;
+}
+
+function updateUserBar() {
+  if (currentUserId) {
+    userBar.style.display = 'block';
+    usernameDisplay.textContent = currentUsername;
+  } else {
+    userBar.style.display = 'none';
+  }
+}
+
+function updateCouponUI() {
+  if (!currentUserId) {
+    drawCouponBtn.disabled = false;
+    drawCouponBtn.textContent = '🎟️ Draw Welfare Coupon';
+    myCouponBox.style.display = 'none';
+    redeemBox.style.display = 'none';
+    couponStatus.textContent = 'Sign in to draw your one-time welfare coupon.';
+    return;
+  }
+
+  if (userCoupon) {
+    myCouponBox.style.display = 'block';
+    myCouponValue.textContent = userCoupon.name || userCoupon.label;
+    drawCouponBtn.disabled = true;
+    drawCouponBtn.textContent = '✓ Coupon Drawn';
+  } else if (canDrawCoupon) {
+    myCouponBox.style.display = 'none';
+    drawCouponBtn.disabled = false;
+    drawCouponBtn.textContent = '🎟️ Draw Welfare Coupon';
+    couponStatus.textContent = 'You have 1 chance to draw a welfare coupon!';
+  }
+
+  if (userCoupon && canRedeem) {
+    redeemBox.style.display = 'block';
+    couponStatus.textContent = 'Redeem your coupon with spend amount to earn wheel spins.';
+  } else if (userCoupon && couponRedeemed) {
+    redeemBox.style.display = 'none';
+    couponStatus.textContent = 'Coupon redeemed. Use your spins on the wheel above!';
+  } else if (!userCoupon && !canDrawCoupon) {
+    couponStatus.textContent = '';
+  }
 }
 
 function getPrizeIcon(id) {
@@ -81,6 +134,18 @@ function updateTapHand() {
   if (!tapHand) return;
   const show = currentUserId && remaining > 0 && !isSpinning;
   tapHand.classList.toggle('hidden', !show);
+}
+
+function updateSpinBtn() {
+  if (!currentUserId) {
+    spinBtn.disabled = false;
+    setSpinLabel('Spin');
+    return;
+  }
+  spinBtn.disabled = remaining <= 0 || isSpinning;
+  if (isSpinning) setSpinLabel('Spinning...');
+  else setSpinLabel(remaining > 0 ? 'Spin' : 'No spins left');
+  updateTapHand();
 }
 
 function buildWheel(prizeList) {
@@ -127,31 +192,45 @@ function buildLights() {
   }
 }
 
-async function loadStatus() {
-  if (!currentUserId) {
-    showAuth();
-    return;
+function applyUserData(data) {
+  if (data.loggedIn) {
+    remaining = data.remaining;
+    currentUsername = data.username;
+    canDrawCoupon = data.canDrawCoupon;
+    canRedeem = data.canRedeem;
+    userCoupon = data.coupon;
+    couponRedeemed = data.couponRedeemed;
+    remainingEl.textContent = remaining;
+  } else {
+    remaining = 0;
+    canDrawCoupon = true;
+    canRedeem = false;
+    userCoupon = null;
+    couponRedeemed = false;
+    remainingEl.textContent = currentUserId ? '-' : '-';
   }
+  updateUserBar();
+  updateCouponUI();
+  updateSpinBtn();
+}
 
-  const res = await fetch(`/api/status?userId=${encodeURIComponent(currentUserId)}`);
+async function loadStatus() {
+  const url = currentUserId
+    ? `/api/status?userId=${encodeURIComponent(currentUserId)}`
+    : '/api/status';
+
+  const res = await fetch(url);
   const data = await res.json();
 
-  if (!res.ok) {
+  if (currentUserId && !res.ok) {
     clearUser();
-    showAuth();
     showAuthError(data.error || 'Session expired. Please sign in again.');
-    return;
+    pendingAction = null;
   }
 
-  prizes = data.prizes;
-  remaining = data.remaining;
-  currentUsername = data.username;
-  remainingEl.textContent = remaining;
-  hideAuth();
+  prizes = data.prizes || [];
   requestAnimationFrame(() => buildWheel(prizes));
-  spinBtn.disabled = remaining <= 0;
-  setSpinLabel(remaining > 0 ? 'Spin' : 'No spins left');
-  updateTapHand();
+  applyUserData(data);
 }
 
 async function handleAuth(endpoint, username, password) {
@@ -167,10 +246,14 @@ async function handleAuth(endpoint, username, password) {
     return;
   }
   saveUser(data.userId, data.username);
-  if (endpoint === 'register' && data.message) {
-    alert(data.message);
-  }
+  hideAuth();
   await loadStatus();
+
+  const action = pendingAction;
+  pendingAction = null;
+  if (action === 'spin') spin();
+  else if (action === 'coupon') drawCoupon();
+  else if (action === 'redeem') redeemCoupon();
 }
 
 function calcTargetRotation(prizeIndex) {
@@ -182,12 +265,14 @@ function calcTargetRotation(prizeIndex) {
 }
 
 async function spin() {
-  if (!currentUserId || isSpinning || remaining <= 0) return;
+  if (!currentUserId) {
+    requireAuth('spin');
+    return;
+  }
+  if (isSpinning || remaining <= 0) return;
 
   isSpinning = true;
-  spinBtn.disabled = true;
-  setSpinLabel('Spinning...');
-  updateTapHand();
+  updateSpinBtn();
 
   try {
     const res = await fetch('/api/spin', {
@@ -200,9 +285,7 @@ async function spin() {
     if (!res.ok) {
       alert(data.error || 'Draw failed');
       isSpinning = false;
-      spinBtn.disabled = remaining <= 0;
-      setSpinLabel(remaining > 0 ? 'Spin' : 'No spins left');
-      updateTapHand();
+      updateSpinBtn();
       return;
     }
 
@@ -218,16 +301,96 @@ async function spin() {
       resultText.innerHTML = `You won<br><span class="result-prize-icon">${icon}</span><strong>${data.prize.name}</strong><br>${data.prize.label}`;
       resultModal.classList.add('show');
       isSpinning = false;
-      spinBtn.disabled = remaining <= 0;
-      setSpinLabel(remaining > 0 ? 'Spin' : 'No spins left');
-      updateTapHand();
+      updateSpinBtn();
     }, SPIN_DURATION + 200);
   } catch {
     alert('Network error. Please try again.');
     isSpinning = false;
-    spinBtn.disabled = false;
-    setSpinLabel('Spin');
-    updateTapHand();
+    updateSpinBtn();
+  }
+}
+
+async function drawCoupon() {
+  if (!currentUserId) {
+    requireAuth('coupon');
+    return;
+  }
+  if (!canDrawCoupon || userCoupon) {
+    alert('You have already used your coupon draw chance.');
+    return;
+  }
+
+  drawCouponBtn.disabled = true;
+  drawCouponBtn.textContent = 'Drawing...';
+
+  try {
+    const res = await fetch('/api/coupon-draw', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: currentUserId }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || 'Coupon draw failed');
+      drawCouponBtn.disabled = false;
+      drawCouponBtn.textContent = '🎟️ Draw Welfare Coupon';
+      return;
+    }
+
+    userCoupon = data.coupon;
+    canDrawCoupon = false;
+    canRedeem = true;
+    couponResultText.innerHTML = `You won a coupon!<br><strong>${data.coupon.name}</strong>`;
+    couponResultModal.classList.add('show');
+    updateCouponUI();
+  } catch {
+    alert('Network error. Please try again.');
+    drawCouponBtn.disabled = false;
+    drawCouponBtn.textContent = '🎟️ Draw Welfare Coupon';
+  }
+}
+
+async function redeemCoupon() {
+  if (!currentUserId) {
+    requireAuth('redeem');
+    return;
+  }
+  if (!canRedeem || !userCoupon) {
+    alert('No coupon available to redeem.');
+    return;
+  }
+
+  const amount = Number(spendTier.value);
+  redeemBtn.disabled = true;
+  redeemBtn.textContent = 'Redeeming...';
+
+  try {
+    const res = await fetch('/api/coupon-redeem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: currentUserId, spendAmount: amount }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || 'Redeem failed');
+      redeemBtn.disabled = false;
+      redeemBtn.textContent = 'Redeem for Spins';
+      return;
+    }
+
+    remaining = data.remaining;
+    remainingEl.textContent = remaining;
+    canRedeem = false;
+    couponRedeemed = true;
+    alert(data.message || `You earned ${data.spinsGranted} spins!`);
+    await loadStatus();
+  } catch {
+    alert('Network error. Please try again.');
+  } finally {
+    redeemBtn.disabled = false;
+    redeemBtn.textContent = 'Redeem for Spins';
   }
 }
 
@@ -254,15 +417,20 @@ registerForm.addEventListener('submit', async (e) => {
 
 logoutBtn.addEventListener('click', () => {
   clearUser();
-  remaining = 0;
-  remainingEl.textContent = '-';
-  showAuth();
+  pendingAction = null;
+  loadStatus();
 });
 
 spinBtn.addEventListener('click', spin);
+drawCouponBtn.addEventListener('click', drawCoupon);
+redeemBtn.addEventListener('click', redeemCoupon);
 closeModal.addEventListener('click', () => resultModal.classList.remove('show'));
+closeCouponModal.addEventListener('click', () => couponResultModal.classList.remove('show'));
 resultModal.addEventListener('click', (e) => {
   if (e.target === resultModal) resultModal.classList.remove('show');
+});
+couponResultModal.addEventListener('click', (e) => {
+  if (e.target === couponResultModal) couponResultModal.classList.remove('show');
 });
 
 buildLights();
@@ -273,7 +441,6 @@ if (stored?.userId) {
   currentUsername = stored.username || '';
 }
 loadStatus();
-updateTapHand();
 
 let resizeTimer;
 window.addEventListener('resize', () => {

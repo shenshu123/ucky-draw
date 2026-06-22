@@ -487,13 +487,11 @@ body {
 
 .welfare-notice {
   background: #fff;
-  border-radius: 0 0 16px 16px;
   padding: 14px 16px 18px;
   display: flex;
   gap: 10px;
   align-items: flex-start;
   border-top: 1px dashed #f0d4dc;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
 }
 
 .welfare-notice-icon {
@@ -510,6 +508,99 @@ body {
 
 .welfare-notice strong {
   color: #c0392b;
+}
+
+.coupon-actions {
+  background: #fff;
+  padding: 16px 14px 18px;
+  border-top: 1px dashed #f0d4dc;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.my-coupon-box {
+  background: linear-gradient(135deg, #fff8e6, #fff0f5);
+  border: 2px dashed #e84393;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.my-coupon-label {
+  display: block;
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.my-coupon-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: #e84393;
+}
+
+.coupon-draw-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(90deg, #e84393, #ff6b35);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(232, 67, 147, 0.35);
+}
+
+.coupon-draw-btn:disabled {
+  background: #ccc;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.redeem-box {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.redeem-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.redeem-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  background: #fff;
+}
+
+.redeem-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, #6c2d8a, #9b59b6);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.coupon-status {
+  font-size: 12px;
+  color: #888;
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.5;
 }
 
 .spin-rules-list {
