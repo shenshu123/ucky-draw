@@ -307,6 +307,257 @@ body {
   z-index: 2;
 }
 
+.welfare-section {
+  width: 100%;
+  max-width: 420px;
+  margin: 8px 0 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.welfare-hero {
+  background: linear-gradient(135deg, #ff6b35 0%, #e84393 50%, #9b59b6 100%);
+  border-radius: 16px 16px 0 0;
+  padding: 22px 18px 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.welfare-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(255, 230, 100, 0.15) 0%, transparent 35%);
+  pointer-events: none;
+}
+
+.welfare-hero-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.welfare-hero-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  margin-bottom: 6px;
+  position: relative;
+}
+
+.welfare-hero-sub {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  position: relative;
+}
+
+.coupon-list {
+  background: #fff;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.coupon-card {
+  display: flex;
+  align-items: stretch;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  min-height: 80px;
+}
+
+.coupon-card.featured {
+  box-shadow: 0 4px 18px rgba(232, 67, 147, 0.35);
+  border: 2px solid #ffd700;
+}
+
+.coupon-featured-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: linear-gradient(90deg, #ffd700, #ff8c00);
+  color: #5a3a00;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 0 10px 0 8px;
+  letter-spacing: 0.5px;
+  z-index: 2;
+}
+
+.coupon-left {
+  flex: 0 0 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 8px;
+  color: #fff;
+  position: relative;
+}
+
+.coupon-tier-1 .coupon-left { background: linear-gradient(160deg, #ff9a56, #ff6b35); }
+.coupon-tier-2 .coupon-left { background: linear-gradient(160deg, #ff7eb3, #e84393); }
+.coupon-tier-3 .coupon-left { background: linear-gradient(160deg, #a855f7, #7c3aed); }
+.coupon-tier-4 .coupon-left { background: linear-gradient(160deg, #3b82f6, #1d4ed8); }
+.coupon-tier-5 .coupon-left { background: linear-gradient(160deg, #f59e0b, #d97706); }
+
+.coupon-left::after,
+.coupon-left::before {
+  content: '';
+  position: absolute;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.coupon-left::before { top: -6px; }
+.coupon-left::after { bottom: -6px; }
+
+.coupon-off {
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.coupon-off-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.coupon-divider {
+  width: 0;
+  border-left: 2px dashed rgba(0, 0, 0, 0.12);
+  margin: 8px 0;
+  flex-shrink: 0;
+}
+
+.coupon-right {
+  flex: 1;
+  background: #fff;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+}
+
+.coupon-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #333;
+}
+
+.coupon-condition {
+  font-size: 12px;
+  color: #888;
+}
+
+.coupon-tag {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #e84393;
+  background: #fff0f5;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.welfare-notice {
+  background: #fff;
+  border-radius: 0 0 16px 16px;
+  padding: 14px 16px 18px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border-top: 1px dashed #f0d4dc;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.welfare-notice-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.welfare-notice p {
+  font-size: 12px;
+  line-height: 1.65;
+  color: #555;
+}
+
+.welfare-notice strong {
+  color: #c0392b;
+}
+
+.spin-rules-list {
+  list-style: none;
+  counter-reset: spin-rule;
+  padding: 0;
+}
+
+.spin-rules-list li {
+  counter-increment: spin-rule;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  background: #fff5f8;
+  border-radius: 10px;
+  border: 1px solid #f5e0e8;
+  font-size: 13px;
+  color: #444;
+}
+
+.spin-rules-list li::before {
+  content: counter(spin-rule);
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, #e84393, #ff6b35);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spin-rules-list li strong {
+  color: #e84393;
+  font-size: 15px;
+}
+
+.spin-amount {
+  font-weight: 800;
+  color: #6b1040;
+  min-width: 42px;
+}
+
 .rules-card {
   width: 100%;
   max-width: 420px;
@@ -484,6 +735,88 @@ body {
   cursor: pointer;
 }
 
+.user-bar {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.user-bar strong {
+  color: #ffe066;
+}
+
+.logout-btn {
+  margin-left: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.auth-content {
+  max-width: 360px;
+  width: 90%;
+}
+
+.auth-title {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #eee;
+  background: #fafafa;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.auth-tab.active {
+  background: linear-gradient(90deg, #e84393, #ff6b35);
+  color: #fff;
+  border-color: transparent;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+.auth-submit {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.auth-hint {
+  font-size: 12px;
+  color: #999;
+  margin-top: 12px;
+  line-height: 1.4;
+}
+
+.auth-error {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 10px;
+  min-height: 18px;
+}
+
 @media (max-width: 380px) {
   .title { font-size: 40px; }
   .subtitle { font-size: 16px; }
@@ -495,6 +828,10 @@ body {
   .tap-hand { font-size: 28px; margin-top: 28px; margin-left: 38px; }
   .spin-btn { width: 80px; height: 80px; font-size: 15px; }
   .cta-banner { font-size: 18px; }
+  .welfare-hero-title { font-size: 20px; }
+  .coupon-off { font-size: 22px; }
+  .coupon-left { flex: 0 0 76px; }
+  .spin-rules-list li { font-size: 12px; padding: 8px 10px; }
   .rules-card { padding: 16px 14px; }
   .rules-title { font-size: 15px; }
   .rules-table { font-size: 12px; }

@@ -251,6 +251,43 @@ body {
   font-weight: 600;
 }
 
+.users-table {
+  font-size: 12px;
+}
+
+.set-spins-cell {
+  white-space: nowrap;
+}
+
+.set-spins-input {
+  width: 56px;
+  padding: 4px 6px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-right: 6px;
+}
+
+.btn-set-spins {
+  background: #e84393;
+  color: #fff;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.set-msg {
+  display: block;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.set-msg.ok {
+  color: #27ae60;
+}
+
 @media (min-width: 768px) {
   .cards {
     flex-direction: row;

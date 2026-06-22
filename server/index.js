@@ -4,9 +4,12 @@ const path = require('path');
 const {
   handleStatus,
   handleSpin,
+  handleRegister,
+  handleLogin,
   handleAdminGetConfig,
   handleAdminPutConfig,
   handleAdminStats,
+  handleAdminUpdateUser,
 } = require('../lib/api');
 const { sendJson, readBody } = require('../lib/response');
 
@@ -78,6 +81,8 @@ const server = http.createServer(async (req, res) => {
     }
     const expressRes = createResAdapter(res);
 
+    if (pathname === '/api/register' && req.method === 'POST') return handleRegister(expressReq, expressRes);
+    if (pathname === '/api/login' && req.method === 'POST') return handleLogin(expressReq, expressRes);
     if (pathname === '/api/status') return handleStatus(expressReq, expressRes);
     if (pathname === '/api/spin') return handleSpin(expressReq, expressRes);
     if (pathname === '/api/admin/config') {
@@ -85,6 +90,7 @@ const server = http.createServer(async (req, res) => {
       if (req.method === 'PUT') return handleAdminPutConfig(expressReq, expressRes);
     }
     if (pathname === '/api/admin/stats') return handleAdminStats(expressReq, expressRes);
+    if (pathname === '/api/admin/users' && req.method === 'PUT') return handleAdminUpdateUser(expressReq, expressRes);
 
     if (req.method === 'GET') return serveStatic(req, res);
 

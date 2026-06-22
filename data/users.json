@@ -48,5 +48,20 @@
         "time": "2026-06-08T08:19:41.519Z"
       }
     ]
+  },
+  "9bc8b109-ec9d-49a0-b987-1b3ebf09ed43": {
+    "username": "testuser",
+    "passwordHash": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+    "maxDraws": 5,
+    "drawCount": 1,
+    "history": [
+      {
+        "prizeId": 4,
+        "prizeName": "5th Prize",
+        "prizeLabel": "Apple Watch",
+        "time": "2026-06-22T03:27:56.238Z"
+      }
+    ],
+    "createdAt": "2026-06-22T03:27:51.315Z"
   }
 }

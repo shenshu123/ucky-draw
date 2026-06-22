@@ -32,11 +32,6 @@
         <div class="card">
           <h2>Draw Settings</h2>
           <form id="configForm">
-            <div class="field">
-              <label>Spins per user</label>
-              <input type="number" id="maxDraws" min="0" required>
-            </div>
-
             <h3>Prize Probabilities</h3>
             <div id="prizesContainer"></div>
             <p class="prob-summary">Total weight: <span id="probTotal">0</span> (relative weights, does not need to equal 100)</p>
@@ -47,11 +42,11 @@
         </div>
 
         <div class="card">
-          <h2>Statistics</h2>
+          <h2>Users &amp; Spins</h2>
           <div class="stats-summary">
             <div class="stat-item">
               <span class="stat-num" id="totalUsers">0</span>
-              <span class="stat-label">Participants</span>
+              <span class="stat-label">Registered Users</span>
             </div>
             <div class="stat-item">
               <span class="stat-num" id="totalDraws">0</span>
@@ -59,12 +54,15 @@
             </div>
           </div>
           <button id="refreshStats" class="btn-outline">Refresh</button>
-          <table class="stats-table">
+          <table class="stats-table users-table">
             <thead>
               <tr>
-                <th>User ID</th>
-                <th>Spins</th>
+                <th>Username</th>
+                <th>Max Spins</th>
+                <th>Used</th>
+                <th>Left</th>
                 <th>Last Prize</th>
+                <th>Set Spins</th>
               </tr>
             </thead>
             <tbody id="statsBody"></tbody>

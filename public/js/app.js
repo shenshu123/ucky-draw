@@ -1,10 +1,13 @@
 const SEGMENT_COUNT = 6;
 const SPIN_DURATION = 5000;
+const USER_KEY = 'lucky_draw_user';
 
 let prizes = [];
 let remaining = 0;
 let isSpinning = false;
 let currentRotation = 0;
+let currentUserId = null;
+let currentUsername = '';
 
 const wheelEl = document.getElementById('wheel');
 const spinBtn = document.getElementById('spinBtn');
@@ -12,6 +15,13 @@ const remainingEl = document.getElementById('remaining');
 const resultModal = document.getElementById('resultModal');
 const resultText = document.getElementById('resultText');
 const closeModal = document.getElementById('closeModal');
+const authModal = document.getElementById('authModal');
+const authError = document.getElementById('authError');
+const userBar = document.getElementById('userBar');
+const usernameDisplay = document.getElementById('usernameDisplay');
+const logoutBtn = document.getElementById('logoutBtn');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
 
 const SEGMENT_COLORS = ['#ffb3c6', '#ffd6e0', '#ffb3c6', '#ffd6e0', '#ffb3c6', '#ffd6e0'];
 const PRIZE_ICONS = ['🖥️', '💻', '📱', '📲', '⌚', '💵'];
@@ -19,6 +29,44 @@ const PRIZE_SHORT = ['Desktop', 'Laptop', '17 Pro Max', '17 Pro', 'Watch', '$500
 
 const spinBtnText = spinBtn.querySelector('.spin-btn-text');
 const tapHand = document.getElementById('tapHand');
+
+function getStoredUser() {
+  try {
+    return JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+  } catch {
+    return null;
+  }
+}
+
+function saveUser(userId, username) {
+  localStorage.setItem(USER_KEY, JSON.stringify({ userId, username }));
+  currentUserId = userId;
+  currentUsername = username;
+}
+
+function clearUser() {
+  localStorage.removeItem(USER_KEY);
+  currentUserId = null;
+  currentUsername = '';
+}
+
+function showAuth() {
+  authModal.classList.add('show');
+  userBar.style.display = 'none';
+  spinBtn.disabled = true;
+  setSpinLabel('Sign in to spin');
+  updateTapHand();
+}
+
+function hideAuth() {
+  authModal.classList.remove('show');
+  userBar.style.display = 'block';
+  usernameDisplay.textContent = currentUsername;
+}
+
+function showAuthError(msg) {
+  authError.textContent = msg;
+}
 
 function getPrizeIcon(id) {
   return PRIZE_ICONS[id] || '🎁';
@@ -31,7 +79,7 @@ function setSpinLabel(text) {
 
 function updateTapHand() {
   if (!tapHand) return;
-  const show = remaining > 0 && !isSpinning;
+  const show = currentUserId && remaining > 0 && !isSpinning;
   tapHand.classList.toggle('hidden', !show);
 }
 
@@ -80,16 +128,49 @@ function buildLights() {
 }
 
 async function loadStatus() {
-  const userId = getUserId();
-  const res = await fetch(`/api/status?userId=${encodeURIComponent(userId)}`);
+  if (!currentUserId) {
+    showAuth();
+    return;
+  }
+
+  const res = await fetch(`/api/status?userId=${encodeURIComponent(currentUserId)}`);
   const data = await res.json();
+
+  if (!res.ok) {
+    clearUser();
+    showAuth();
+    showAuthError(data.error || 'Session expired. Please sign in again.');
+    return;
+  }
+
   prizes = data.prizes;
   remaining = data.remaining;
+  currentUsername = data.username;
   remainingEl.textContent = remaining;
+  hideAuth();
   requestAnimationFrame(() => buildWheel(prizes));
   spinBtn.disabled = remaining <= 0;
   setSpinLabel(remaining > 0 ? 'Spin' : 'No spins left');
   updateTapHand();
+}
+
+async function handleAuth(endpoint, username, password) {
+  showAuthError('');
+  const res = await fetch(`/api/${endpoint}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    showAuthError(data.error || 'Request failed');
+    return;
+  }
+  saveUser(data.userId, data.username);
+  if (endpoint === 'register' && data.message) {
+    alert(data.message);
+  }
+  await loadStatus();
 }
 
 function calcTargetRotation(prizeIndex) {
@@ -101,7 +182,7 @@ function calcTargetRotation(prizeIndex) {
 }
 
 async function spin() {
-  if (isSpinning || remaining <= 0) return;
+  if (!currentUserId || isSpinning || remaining <= 0) return;
 
   isSpinning = true;
   spinBtn.disabled = true;
@@ -109,11 +190,10 @@ async function spin() {
   updateTapHand();
 
   try {
-    const userId = getUserId();
     const res = await fetch('/api/spin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId }),
+      body: JSON.stringify({ userId: currentUserId }),
     });
     const data = await res.json();
 
@@ -151,6 +231,34 @@ async function spin() {
   }
 }
 
+document.querySelectorAll('.auth-tab').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.auth-tab').forEach((t) => t.classList.remove('active'));
+    tab.classList.add('active');
+    const isLogin = tab.dataset.tab === 'login';
+    loginForm.style.display = isLogin ? 'block' : 'none';
+    registerForm.style.display = isLogin ? 'none' : 'block';
+    showAuthError('');
+  });
+});
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  await handleAuth('login', document.getElementById('loginUsername').value.trim(), document.getElementById('loginPassword').value);
+});
+
+registerForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  await handleAuth('register', document.getElementById('registerUsername').value.trim(), document.getElementById('registerPassword').value);
+});
+
+logoutBtn.addEventListener('click', () => {
+  clearUser();
+  remaining = 0;
+  remainingEl.textContent = '-';
+  showAuth();
+});
+
 spinBtn.addEventListener('click', spin);
 closeModal.addEventListener('click', () => resultModal.classList.remove('show'));
 resultModal.addEventListener('click', (e) => {
@@ -158,6 +266,12 @@ resultModal.addEventListener('click', (e) => {
 });
 
 buildLights();
+
+const stored = getStoredUser();
+if (stored?.userId) {
+  currentUserId = stored.userId;
+  currentUsername = stored.username || '';
+}
 loadStatus();
 updateTapHand();
 

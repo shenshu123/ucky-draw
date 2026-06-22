@@ -81,8 +81,32 @@ function updateTotal() {
 async function loadConfig() {
   const res = await fetch('/api/admin/config', { headers: headers() });
   const data = await res.json();
-  document.getElementById('maxDraws').value = data.maxDrawsPerUser;
   renderPrizes(data.prizes);
+}
+
+async function setUserSpins(userId, maxDraws, row) {
+  const msgEl = row.querySelector('.set-msg');
+  try {
+    const res = await fetch('/api/admin/users', {
+      method: 'PUT',
+      headers: headers(),
+      body: JSON.stringify({ userId, maxDraws }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || 'Update failed');
+      return;
+    }
+    msgEl.textContent = 'Saved';
+    msgEl.className = 'set-msg ok';
+    setTimeout(() => {
+      msgEl.textContent = '';
+      msgEl.className = 'set-msg';
+    }, 2000);
+    await loadStats();
+  } catch {
+    alert('Update failed');
+  }
 }
 
 async function loadStats() {
@@ -91,22 +115,40 @@ async function loadStats() {
   document.getElementById('totalUsers').textContent = data.totalUsers;
   document.getElementById('totalDraws').textContent = data.totalDraws;
   statsBody.innerHTML = data.users
-    .slice(0, 50)
     .map(
       (u) => `
-    <tr>
-      <td>${u.userId}</td>
+    <tr data-user-id="${u.userId}">
+      <td><strong>${u.username}</strong></td>
+      <td>${u.maxDraws}</td>
       <td>${u.drawCount}</td>
+      <td>${u.remaining}</td>
       <td>${u.lastPrize ? u.lastPrize.prizeName + ' - ' + u.lastPrize.prizeLabel : '-'}</td>
+      <td class="set-spins-cell">
+        <input type="number" class="set-spins-input" value="${u.maxDraws}" min="0">
+        <button type="button" class="btn-set-spins">Save</button>
+        <span class="set-msg"></span>
+      </td>
     </tr>
   `
     )
     .join('');
+
+  statsBody.querySelectorAll('.btn-set-spins').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const row = btn.closest('tr');
+      const userId = row.dataset.userId;
+      const maxDraws = Number(row.querySelector('.set-spins-input').value);
+      if (Number.isNaN(maxDraws) || maxDraws < 0) {
+        alert('Enter a valid spin count');
+        return;
+      }
+      setUserSpins(userId, maxDraws, row);
+    });
+  });
 }
 
 configForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const maxDraws = Number(document.getElementById('maxDraws').value);
   const inputs = prizesContainer.querySelectorAll('input[type="number"]');
   const prizes = Array.from(inputs).map((inp, i) => ({
     name: PRIZE_NAMES[i],
@@ -118,7 +160,7 @@ configForm.addEventListener('submit', async (e) => {
     const res = await fetch('/api/admin/config', {
       method: 'PUT',
       headers: headers(),
-      body: JSON.stringify({ maxDrawsPerUser: maxDraws, prizes }),
+      body: JSON.stringify({ maxDrawsPerUser: 0, prizes }),
     });
     const data = await res.json();
     if (!res.ok) {
